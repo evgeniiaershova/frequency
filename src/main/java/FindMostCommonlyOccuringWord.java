@@ -1,8 +1,8 @@
+import java.io.IOException;
 import java.util.*;
 
 public class FindMostCommonlyOccuringWord {
     public static void main(String[] args) throws Exception {
-
 
         String text = "Есть много вариантов Lorem Ipsum, но большинство из них имеет не всегда приемлемые модификации," +
                 " например, юмористические вставки или слова, которые даже отдалённо не напоминают латынь. " +
@@ -12,62 +12,55 @@ public class FindMostCommonlyOccuringWord {
                 "Он использует словарь из более чем 200 латинских слов, а также набор моделей предложений. " +
                 "В результате сгенерированный Lorem Ipsum выглядит правдоподобно, не имеет повторяющихся абзацей или \"невозможных\" слов.";
 
-/*
-        String text = null;
-        String text = "";
-        String text = "cat dog";
-        String text = "test log test log ";
-*/
-
-        if (text == null ) {
-            System.out.println("The text is null, it was not defined.");        }
-        else if (text.length() == 0) {
-            System.out.println("The text length is equal to zero.");
-        }
-        else findTheMostFrequentWord(text);
-
+        List<String> textToArray = getTextAsArray(text);
+        findTheMostFrequentWord(textToArray);
     }
 
-    private static void findTheMostFrequentWord(String text) {
-        List<String> textToArray = new ArrayList<String>(Arrays.asList(text
-                .replaceAll("\\p{P}", "")
-                .toLowerCase()
-                .split(" ")));
-
-        Map<String, Integer> map = new LinkedHashMap<String, Integer>();
-        for (String word : textToArray) {
-                map.put(word, Collections.frequency(textToArray, word));
-        }
-
-        Map.Entry<String, Integer> maxValue = map.entrySet().iterator().next();
-         // find the largest frequency value
-        for (Map.Entry<String, Integer> entry : map.entrySet()) {
-            if (entry.getValue() > maxValue.getValue()) {
-                maxValue = entry;
-            }
-        }
-
-        // check if there are words more than one word with max frequency value
-        Map<String, Integer> rivalsMap = new LinkedHashMap<String, Integer>();
-        if (maxValue.getValue() != 1) {
-            for (Map.Entry<String, Integer> entry : map.entrySet()) {
-                if (entry.getValue() == maxValue.getValue()) {
-                    rivalsMap.put(entry.getKey(), entry.getValue());
-                }
-            }
-        }
-
-        if (rivalsMap.size() <= 1 ) {
-            if (maxValue.getValue() != 1) {
-                System.out.println("the most popular word is \"" + maxValue.getKey() + "\", it occurs " + maxValue.getValue() + " times.");
-            }
-            else {
-                System.out.println("There's no word, which occurs more than once.");
-            }
+    private static List<String> getTextAsArray(String text) throws Exception {
+        if (text == null ) {
+            throw new Exception("The text is null, it was not defined.");        }
+        else if (text.length() == 0) {
+            throw new Exception("The text length is equal to zero.");
         }
         else {
-            System.out.println("The most popular words are: " + rivalsMap.entrySet());
+            List<String> textToArray = new ArrayList<String>(Arrays.asList(text
+                    .replaceAll("\\p{P}", "")
+                    .toLowerCase()
+                    .split(" ")));
+            return textToArray;
         }
+    }
+
+    private static void findTheMostFrequentWord(List<String> textToArray) {
+        Map<String, Integer> map = new LinkedHashMap<String, Integer>();
+        int counter = 1;
+        int frequency = 1;
+
+        for (String word : textToArray) {
+          /*  for (int i = 0; i < textToArray.size(); i++) {
+                if (textToArray.get(i) == word) {
+                    frequency++;
+                    textToArray.remove(textToArray.get(i));
+                }
+            }*/
+          Iterator it = textToArray.iterator();
+          while(it.hasNext()){
+              Object item = it.next();
+              if(item == word) {
+                  frequency++;
+                  textToArray.remove(item);
+              }
+          }
+
+            if (counter < frequency) {
+                map.clear();
+                map.put(word, frequency);
+                counter = frequency;
+            } else if (counter == frequency) {
+                map.put(word, frequency);
+            }
+        }
+        System.out.println(map.entrySet());
     }
 }
 
