@@ -1,4 +1,3 @@
-import java.io.IOException;
 import java.util.*;
 
 public class FindMostCommonlyOccuringWord {
@@ -13,7 +12,8 @@ public class FindMostCommonlyOccuringWord {
                 "В результате сгенерированный Lorem Ipsum выглядит правдоподобно, не имеет повторяющихся абзацей или \"невозможных\" слов.";
 
         List<String> textToArray = getTextAsArray(text);
-        findTheMostFrequentWord(textToArray);
+        Map<String, Integer> mapFr = createWordFrequencyMap(textToArray);
+        findTheMaxVal(mapFr);
     }
 
     private static List<String> getTextAsArray(String text) throws Exception {
@@ -31,37 +31,95 @@ public class FindMostCommonlyOccuringWord {
         }
     }
 
-    private static void findTheMostFrequentWord(List<String> textToArray) {
-        Map<String, Integer> map = new LinkedHashMap<String, Integer>();
-        int counter = 1;
-        int frequency = 1;
-
-        for (String word : textToArray) {
-          /*  for (int i = 0; i < textToArray.size(); i++) {
-                if (textToArray.get(i) == word) {
-                    frequency++;
-                    textToArray.remove(textToArray.get(i));
-                }
-            }*/
-          Iterator it = textToArray.iterator();
-          while(it.hasNext()){
-              Object item = it.next();
-              if(item == word) {
-                  frequency++;
-                  textToArray.remove(item);
-              }
-          }
-
-            if (counter < frequency) {
-                map.clear();
-                map.put(word, frequency);
-                counter = frequency;
-            } else if (counter == frequency) {
-                map.put(word, frequency);
+    public static void findTheMaxVal(Map<String, Integer> map) {
+        int count = 1;
+        HashMap<String, Integer> newMap = new HashMap<>(map);
+        for (Map.Entry<String, Integer> entry : map.entrySet()) {
+            if (entry.getValue() > count) {
+                newMap.clear();
+                newMap.put(entry.getKey(), entry.getValue());
+                count = entry.getValue();
+            } else if (entry.getValue() == count) {
+                newMap.put(entry.getKey(), entry.getValue());
             }
         }
-        System.out.println(map.entrySet());
+        System.out.println("[Result]: " + newMap.entrySet());
     }
+
+    private static Map<String, Integer> createWordFrequencyMap(List<String> textToArray) {
+        Map<String, Integer> map = new HashMap<>();
+        Iterator it = textToArray.iterator();
+        int run = 0;
+        while (it.hasNext()) {
+            String word = it.next().toString();
+            int result = 0;
+            List<String> ar = new ArrayList<>(textToArray);
+            Iterator iterator = ar.iterator();
+            while (iterator.hasNext()) {
+                String item = iterator.next().toString();
+                if (word.equals(item)) {
+                    result++;
+                    run ++;
+                    iterator.remove();
+                }
+            }
+            map.put(word, result);
+        }
+        System.out.println("Times run: " + run);
+        return map;
+    }
+
+
+    //    private static Map<String, Integer> createWordFrequencyMap(List<String> textToArray) {
+//        Map<String, Integer> map = new HashMap<>();
+//        Iterator it = textToArray.iterator();
+//        int runSum = 0;
+//        while (it.hasNext()) {
+//            String word = it.next().toString();
+//            int[] fr = countFrequency(textToArray, word);
+//            map.put(word, fr[1]);
+//            runSum = runSum + fr[0];
+////                map.put(word, countFrequency(textToArray, word));
+//        }
+//        System.out.println("Times run: " + runSum);
+//        return map;
+//    }
+
+
+    private static int[] countFrequency(List<String> array, String word) {
+        List<String> ar = new ArrayList<>(array);
+        int result = 0;
+        int run = 0;
+        Iterator it = ar.iterator();
+        while (it.hasNext()) {
+            String item = it.next().toString();
+            if (word.equals(item)) {
+                result++;
+                run++;
+                it.remove();
+            }
+        }
+        return new int[]{run, result};
+    }
+
+    public static int[] frequency(Collection<?> c, Object o) {
+        int result = 0;
+        int run = 0;
+        if (o == null) {
+            for (Object e : c)
+                if (e == null)
+                    result++;
+        } else {
+            for (Object e : c) {
+                if (o.equals(e)) {
+                    result++;
+                    run++;
+                }
+            }
+        }
+        return new int[]{run, result};
+    }
+
 }
 
 
