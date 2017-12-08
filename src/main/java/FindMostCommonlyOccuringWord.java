@@ -12,7 +12,7 @@ public class FindMostCommonlyOccuringWord {
                 "В результате сгенерированный Lorem Ipsum выглядит правдоподобно, не имеет повторяющихся абзацей или \"невозможных\" слов.";
 
         List<String> textToArray = getTextAsArray(text);
-        Map<String, Integer> mapFr = createWordFrequencyMap(textToArray);
+        Map<String, Integer> mapFr = createWordFrequencyMapVerLoop(textToArray);
         findTheMaxVal(mapFr);
     }
 
@@ -33,7 +33,7 @@ public class FindMostCommonlyOccuringWord {
 
     public static void findTheMaxVal(Map<String, Integer> map) {
         int count = 1;
-        HashMap<String, Integer> newMap = new HashMap<>(map);
+        HashMap<String, Integer> newMap = new HashMap<String, Integer>(map);
         for (Map.Entry<String, Integer> entry : map.entrySet()) {
             if (entry.getValue() > count) {
                 newMap.clear();
@@ -47,13 +47,13 @@ public class FindMostCommonlyOccuringWord {
     }
 
     private static Map<String, Integer> createWordFrequencyMap(List<String> textToArray) {
-        Map<String, Integer> map = new HashMap<>();
+        Map<String, Integer> map = new HashMap<String, Integer>();
         Iterator it = textToArray.iterator();
         int run = 0;
         while (it.hasNext()) {
             String word = it.next().toString();
             int result = 0;
-            List<String> ar = new ArrayList<>(textToArray);
+            List<String> ar = new ArrayList<String>(textToArray);
             Iterator iterator = ar.iterator();
             while (iterator.hasNext()) {
                 String item = iterator.next().toString();
@@ -87,7 +87,7 @@ public class FindMostCommonlyOccuringWord {
 
 
     private static int[] countFrequency(List<String> array, String word) {
-        List<String> ar = new ArrayList<>(array);
+        List<String> ar = new ArrayList<String>(array);
         int result = 0;
         int run = 0;
         Iterator it = ar.iterator();
@@ -120,6 +120,27 @@ public class FindMostCommonlyOccuringWord {
         return new int[]{run, result};
     }
 
+
+    private static Map<String, Integer> createWordFrequencyMapVerLoop(List<String> textToArray) {
+        Map<String, Integer> map = new HashMap<String, Integer>();
+        List<String> newList = new ArrayList<String>(textToArray);
+        int run = 0;
+        for (int i = 0; i < textToArray.size(); i++) {
+            String wordToComp = textToArray.get(i);
+            int result = 0;
+            for (int j = 0; j < newList.size(); j++ ) {
+                String word = newList.get(j);
+                if (wordToComp.equals(word)) {
+                    result++;
+                    run++;
+                }
+            }
+            textToArray.remove(wordToComp);
+            map.put(wordToComp, result);
+        }
+        System.out.println("Times run: " + run);
+        return map;
+    }
 }
 
 
